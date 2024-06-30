@@ -1,6 +1,8 @@
 import { useFormik } from "formik";
 import { forwardRef, useRef, useImperativeHandle, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
+
 import Input from "./Input";
 import { isEmpty } from "../common/utils/utill";
 import {
@@ -9,8 +11,9 @@ import {
   setActiveClient,
   updateClientsById,
 } from "../redux/client/client.slice";
+import Button from "./Button";
 
-const ResultModal = forwardRef(function (props, ref) {
+const ClientModal = forwardRef(function (props, ref) {
   const dailogRef = useRef();
 
   useImperativeHandle(ref, () => {
@@ -39,19 +42,24 @@ const ResultModal = forwardRef(function (props, ref) {
       ref={dailogRef}
       className="fixed inset-0 z-10 w-screen overflow-y-auto rounded-lg"
     >
-      <div className="flex min-h-full items-start justify-center p-4 text-center bg-gray-100 py-4">
-        <h2 className="text-4xl font-extrabold dark:text-white">
-          {activeClient.name || "New Company Details"}
-        </h2>
-      </div>
-      <div className="flex min-h-full items-end justify-center mt-4 p-4">
-        <ModalForm activeClient={activeClient} />
-      </div>
+      {!isEmpty(activeClient) && (
+        <>
+          <div className="flex min-h-full items-start justify-center p-4 text-center bg-gray-100 py-4">
+            <h2 className="text-4xl font-extrabold dark:text-white">
+              {activeClient.name || "New Company Details"}
+            </h2>
+          </div>
+          <div className="flex min-h-full items-end justify-center mt-4 p-4">
+            <ModalForm activeClient={activeClient} />
+          </div>
+        </>
+      )}
     </dialog>
   );
 });
 
 function ModalForm({ activeClient, ...props }) {
+  const creatingNew = !activeClient.id ? true : false;
   const dispatch = useDispatch();
 
   const validate = (values) => {
@@ -65,8 +73,10 @@ function ModalForm({ activeClient, ...props }) {
     },
     validate,
     onSubmit: (values) => {
-      if (!values.id) {
-        delete values.id;
+      if (isEmpty(values)) return;
+
+      if (creatingNew) {
+        delete values.id; //Double check for cleaning up
         handleSave(values);
       } else {
         handleUpdate(values);
@@ -94,7 +104,8 @@ function ModalForm({ activeClient, ...props }) {
     dispatch(setActiveClient({}));
   };
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} {...props}>
+      {/* Body */}
       <div className="text-left grid gap-6 mb-6 md:grid-cols-3">
         {inpitFields &&
           inpitFields.length > 0 &&
@@ -116,31 +127,30 @@ function ModalForm({ activeClient, ...props }) {
             );
           })}
       </div>
+      {/* Footer */}
       <div className="flex min-h-full items-end justify-center mt-4 p-4">
-        <button
-          onClick={handleClose}
-          type="button"
-          className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-        >
-          Close
-        </button>
-        <button
-          onClick={() => handleDelete(formik.values)}
-          type="button"
-          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-        >
-          Delete
-        </button>
-        <button
+        <Button color={"white"} label={"Close"} onClick={handleClose} />
+        {!creatingNew && (
+          <Button
+            color={"red"}
+            label={"Delete"}
+            onClick={() => handleDelete(formik.values)}
+          />
+        )}
+        <Button
+          color={"blue"}
+          label={"Save"}
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        >
-          Save
-        </button>
+        />
       </div>
     </form>
   );
 }
 
-ResultModal.displayName = "ResultModal";
-export default ResultModal;
+ModalForm.propTypes = {
+  activeClient: PropTypes.object.isRequired,
+};
+
+ClientModal.displayName = "ClientModal";
+export default ClientModal;

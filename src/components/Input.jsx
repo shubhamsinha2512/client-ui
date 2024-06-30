@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function Input({ name, value, ...props }) {
   return (
     <>
@@ -18,5 +20,10 @@ function Input({ name, value, ...props }) {
     </>
   );
 }
+
+Input.propTypes = {
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+};
 
 export default Input;

@@ -3,6 +3,7 @@ import ClientModal from "./ClientModal";
 import { useDispatch } from "react-redux";
 import { setActiveClient } from "../redux/client/client.slice";
 import { newEmptyClient } from "../redux/client/client.initialState";
+import Button from "./Button";
 
 function Nav() {
   let dailogRef = useRef();
@@ -32,13 +33,18 @@ function Nav() {
           </a>
         </div>
         <div>
-          <button
+          {/* <button
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             onClick={handleAddClient}
           >
             Create New Client
-          </button>
+          </button> */}
+          <Button
+            label={"Create New Client"}
+            onClick={handleAddClient}
+            color="blue"
+          />
         </div>
       </nav>
     </>

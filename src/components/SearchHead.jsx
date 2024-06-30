@@ -1,15 +1,14 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
+import Avatar from "boring-avatars";
+
+import { generateRandomColorArray } from "../common/utils/utill";
 import {
   fetchClientsById,
   searchClients,
   setSearchResults,
 } from "../redux/client/client.slice";
-import PropTypes from "prop-types";
-import { generateRandomColorArray } from "../common/utils/utill";
-
-import Avatar from "boring-avatars";
-import searchBarIcon from "../common/icons/searchBarIcon.svg";
 
 function SearchHead() {
   const dispatch = useDispatch();
@@ -30,7 +29,7 @@ function SearchHead() {
       clearTimeout(searchTimerRef.current);
       searchTimerRef.current = setTimeout(() => {
         dispatch(searchClients(query));
-      }, 300);
+      }, 200);
     }
   };
 
@@ -54,7 +53,6 @@ function SearchHead() {
           placeholder="Start typing to search.."
           onChange={handleTyping}
           onBlur={handleBlur}
-          onFocus={handleTyping}
         />
       </div>
       <SearchResults searchResult={searchResult} />
@@ -88,7 +86,7 @@ function SearchResults({ searchResult }) {
 }
 
 SearchResults.propTypes = {
-  searchResult: [],
+  searchResult: PropTypes.array,
 };
 
 function SearchResultItem({ client, ...props }) {
