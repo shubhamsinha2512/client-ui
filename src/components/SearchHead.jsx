@@ -147,6 +147,7 @@ SearchResultItem.propTypes = {
     address: PropTypes.string,
     link: PropTypes.string,
   },
+  onClick: PropTypes.func,
 };
 
 export default SearchHead;

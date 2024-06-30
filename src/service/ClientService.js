@@ -1,7 +1,7 @@
 import axios from "axios";
+import { CLIENTS_API } from "../common/config";
 
-const BASE_URL = "http://localhost:3001";
-const CLIENTS = `${BASE_URL}/v1/clients`;
+const CLIENTS = CLIENTS_API;
 
 export const fetchClientsWithQueryAPI = async (query) => {
   const API = CLIENTS;
