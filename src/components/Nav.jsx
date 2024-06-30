@@ -1,11 +1,15 @@
 import { useRef } from "react";
 import ClientModal from "./ClientModal";
+import { useDispatch } from "react-redux";
+import { setActiveClient } from "../redux/client/client.slice";
+import { newEmptyClient } from "../redux/client/client.initialState";
 
 function Nav() {
   let dailogRef = useRef();
+  const dispatch = useDispatch();
 
   const handleAddClient = () => {
-    dailogRef.current.open();
+    dispatch(setActiveClient(newEmptyClient));
   };
 
   return (

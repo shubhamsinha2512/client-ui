@@ -1,7 +1,16 @@
-import { forwardRef, useRef, useImperativeHandle } from "react";
-import { useSelector } from "react-redux";
+import { useFormik } from "formik";
+import { forwardRef, useRef, useImperativeHandle, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Input from "./Input";
+import { isEmpty } from "../common/utils/utill";
+import {
+  deleteClientsById,
+  saveClient,
+  setActiveClient,
+  updateClientsById,
+} from "../redux/client/client.slice";
 
-const ResultModal = forwardRef(function ({ ...props }, ref) {
+const ResultModal = forwardRef(function (props, ref) {
   const dailogRef = useRef();
 
   useImperativeHandle(ref, () => {
@@ -17,38 +26,106 @@ const ResultModal = forwardRef(function ({ ...props }, ref) {
 
   const activeClient = useSelector((state) => state.clients.activeClient);
 
+  useEffect(() => {
+    if (!isEmpty(activeClient)) {
+      dailogRef.current.showModal();
+    }
+  }, [activeClient]);
+
   return (
     <dialog
       ref={dailogRef}
-      className="fixed inset-0 z-10 w-screen overflow-y-auto"
+      className="fixed inset-0 z-10 w-screen overflow-y-auto rounded-lg"
     >
-      <div className="flex min-h-full items-end justify-center p-4 text-center">
-        <div></div>
-        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-          <button
-            type="button"
-            className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-            onClick={() => {}}
-          >
-            Deactivate
-          </button>
-          <form method="dialog">
-            <button
-              type="button"
-              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-              onClick={() => {
-                dailogRef.current.close();
-              }}
-              data-autofocus
-            >
-              Cancel
-            </button>
-          </form>
-        </div>
+      <div className="flex min-h-full items-start justify-center p-4 text-center bg-gray-100 py-4">
+        <h2 className="text-4xl font-extrabold dark:text-white">
+          {activeClient.name || "New Company Details"}
+        </h2>
+      </div>
+      <div className="flex min-h-full items-end justify-center mt-4 p-4">
+        <ModalForm activeClient={activeClient} />
       </div>
     </dialog>
   );
 });
+
+function ModalForm({ activeClient, ...props }) {
+  const dispatch = useDispatch();
+
+  const validate = (values) => {
+    const errors = {};
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      ...activeClient,
+    },
+    validate,
+    onSubmit: (values) => {
+      handleUpdate(values);
+    },
+    enableReinitialize: true,
+  });
+
+  const inpitFields = Object.entries(formik.values);
+
+  const handleUpdate = (values) => {
+    dispatch(updateClientsById(values.id, values));
+  };
+
+  const handleDelete = (values) => {
+    const id = values?.id;
+    dispatch(deleteClientsById(id));
+  };
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <div className="text-left grid gap-6 mb-6 md:grid-cols-3">
+        {inpitFields &&
+          inpitFields.length > 0 &&
+          inpitFields.map(([key], index) => {
+            return (
+              <div key={index}>
+                <Input
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  key={key}
+                  id={key}
+                  name={key}
+                  type="text"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values[key]}
+                  disabled={key === "id"}
+                />
+              </div>
+            );
+          })}
+      </div>
+      <div className="flex min-h-full items-end justify-center mt-4 p-4">
+        <button
+          type="button"
+          className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => handleDelete(formik.values)}
+          type="button"
+          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+        >
+          Delete
+        </button>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  );
+}
 
 ResultModal.displayName = "ResultModal";
 export default ResultModal;
