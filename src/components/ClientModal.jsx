@@ -29,6 +29,8 @@ const ResultModal = forwardRef(function (props, ref) {
   useEffect(() => {
     if (!isEmpty(activeClient)) {
       dailogRef.current.showModal();
+    } else {
+      dailogRef.current.close();
     }
   }, [activeClient]);
 
@@ -63,15 +65,24 @@ function ModalForm({ activeClient, ...props }) {
     },
     validate,
     onSubmit: (values) => {
-      handleUpdate(values);
+      if (!values.id) {
+        delete values.id;
+        handleSave(values);
+      } else {
+        handleUpdate(values);
+      }
     },
     enableReinitialize: true,
   });
 
   const inpitFields = Object.entries(formik.values);
 
+  const handleSave = (values) => {
+    dispatch(saveClient(values));
+  };
+
   const handleUpdate = (values) => {
-    dispatch(updateClientsById(values.id, values));
+    dispatch(updateClientsById(values));
   };
 
   const handleDelete = (values) => {
@@ -79,6 +90,9 @@ function ModalForm({ activeClient, ...props }) {
     dispatch(deleteClientsById(id));
   };
 
+  const handleClose = () => {
+    dispatch(setActiveClient({}));
+  };
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="text-left grid gap-6 mb-6 md:grid-cols-3">
@@ -104,10 +118,11 @@ function ModalForm({ activeClient, ...props }) {
       </div>
       <div className="flex min-h-full items-end justify-center mt-4 p-4">
         <button
+          onClick={handleClose}
           type="button"
           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
         >
-          Cancel
+          Close
         </button>
         <button
           onClick={() => handleDelete(formik.values)}

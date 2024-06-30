@@ -2,6 +2,7 @@ export const clientInitialState = {
   clients: [],
   searchResults: [],
   activeClient: {},
+  showClientModal: false,
 };
 
 export const newEmptyClient = {

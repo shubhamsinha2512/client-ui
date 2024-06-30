@@ -16,6 +16,7 @@ const clientSlice = createSlice({
     },
     setActiveClient: (state, action) => {
       state.activeClient = action.payload;
+      state.showClientModal = true;
     },
   },
   extraReducers: (builder) => {
@@ -39,17 +40,19 @@ const clientSlice = createSlice({
     builder.addCase(saveClient.rejected, (state, action) => {});
     builder.addCase(saveClient.fulfilled, (state, action) => {
       state.activeClient = action.payload.data;
+      state.showClientModal = false;
     });
 
     builder.addCase(updateClientsById.rejected, (state, action) => {});
     builder.addCase(updateClientsById.fulfilled, (state, action) => {
       state.activeClient = action.payload.data;
+      state.showClientModal = false;
     });
 
     builder.addCase(deleteClientsById.rejected, (state, action) => {});
     builder.addCase(deleteClientsById.fulfilled, (state, action) => {
       if (isEmpty(action.payload)) {
-        state.activeClient = {};
+        state.showClientModal = false;
       }
     });
   },
@@ -73,7 +76,7 @@ export const saveClient = createAsyncThunk("saveClient", (client) =>
 
 export const updateClientsById = createAsyncThunk(
   "updateClientsById",
-  (id, client) => ClientService.updateClientsByIdAPI(id, client)
+  (client) => ClientService.updateClientsByIdAPI(client.id, client)
 );
 
 export const deleteClientsById = createAsyncThunk("deleteClientsById", (id) =>
