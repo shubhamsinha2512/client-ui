@@ -1,0 +1,18 @@
+/* Style Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(236, 236, 236);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(219, 219, 219);
+    border-radius: 20px;
+    height: 100px;
+}
+
+.h-parent-100 {
+    max-height: 100%;
+}

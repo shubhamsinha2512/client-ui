@@ -40,19 +40,20 @@ const clientSlice = createSlice({
     builder.addCase(saveClient.rejected, (state, action) => {});
     builder.addCase(saveClient.fulfilled, (state, action) => {
       state.activeClient = action.payload.data;
-      state.showClientModal = false;
     });
 
     builder.addCase(updateClientsById.rejected, (state, action) => {});
     builder.addCase(updateClientsById.fulfilled, (state, action) => {
       state.activeClient = action.payload.data;
-      state.showClientModal = false;
     });
 
     builder.addCase(deleteClientsById.rejected, (state, action) => {});
     builder.addCase(deleteClientsById.fulfilled, (state, action) => {
-      if (isEmpty(action.payload)) {
-        state.showClientModal = false;
+      if (!isEmpty(action.payload)) {
+        state.clients = state.clients.filter(
+          (client) => client.id !== action.data
+        );
+        state.activeClient = {};
       }
     });
   },

@@ -3,15 +3,15 @@ import { forwardRef, useRef, useImperativeHandle, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 
-import Input from "./Input";
-import { isEmpty } from "../common/utils/utill";
+import Input from "../Input";
+import { isEmpty } from "../../common/utils/utill";
 import {
   deleteClientsById,
   saveClient,
   setActiveClient,
   updateClientsById,
-} from "../redux/client/client.slice";
-import Button from "./Button";
+} from "../../redux/client/client.slice";
+import Button from "../Button";
 
 const ClientModal = forwardRef(function (props, ref) {
   const dailogRef = useRef();
@@ -29,19 +29,16 @@ const ClientModal = forwardRef(function (props, ref) {
 
   const activeClient = useSelector((state) => state.clients.activeClient);
 
-  useEffect(() => {
-    if (!isEmpty(activeClient)) {
-      dailogRef.current.showModal();
-    } else {
-      dailogRef.current.close();
-    }
-  }, [activeClient]);
+  // useEffect(() => {
+  //   if (!isEmpty(activeClient)) {
+  //     dailogRef.current.showModal();
+  //   } else {
+  //     dailogRef.current.close();
+  //   }
+  // }, [activeClient]);
 
   return (
-    <dialog
-      ref={dailogRef}
-      className="fixed inset-0 z-10 w-screen overflow-y-auto rounded-lg"
-    >
+    <dialog ref={dailogRef} className="fixed inset-0 z-10 w-screen rounded-lg">
       {!isEmpty(activeClient) && (
         <>
           <div className="flex min-h-full items-start justify-center p-4 text-center bg-gray-100 py-4">
@@ -50,7 +47,7 @@ const ClientModal = forwardRef(function (props, ref) {
             </h2>
           </div>
           <div className="flex min-h-full items-end justify-center mt-4 p-4">
-            <ModalForm activeClient={activeClient} />
+            <ClientForm activeClient={activeClient} />
           </div>
         </>
       )}
@@ -58,7 +55,7 @@ const ClientModal = forwardRef(function (props, ref) {
   );
 });
 
-function ModalForm({ activeClient, ...props }) {
+function ClientForm({ activeClient, ...props }) {
   const creatingNew = !activeClient.id ? true : false;
   const dispatch = useDispatch();
 
@@ -148,7 +145,7 @@ function ModalForm({ activeClient, ...props }) {
   );
 }
 
-ModalForm.propTypes = {
+ClientForm.propTypes = {
   activeClient: PropTypes.object.isRequired,
 };
 

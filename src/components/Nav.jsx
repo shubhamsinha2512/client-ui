@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import ClientModal from "./ClientModal";
+import ClientModal from "./Clients/ClientModal";
 import { useDispatch } from "react-redux";
 import { setActiveClient } from "../redux/client/client.slice";
 import { newEmptyClient } from "../redux/client/client.initialState";
@@ -16,7 +16,7 @@ function Nav() {
   return (
     <>
       <ClientModal ref={dailogRef} />
-      <nav className="flex bg-white justify-between w-full my-4">
+      <nav className="flex bg-gray-50 justify-between w-full border-b-4 p-5">
         <div className="flex max-w-screen-xl p-2">
           <a
             href="/"

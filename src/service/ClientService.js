@@ -5,7 +5,7 @@ const CLIENTS = CLIENTS_API;
 
 export const fetchClientsWithQueryAPI = async (query) => {
   const API = CLIENTS;
-  const options = { ...query, es: true };
+  const options = { ...query };
 
   const response = await axios.get(API, { params: options });
   return Promise.resolve(response.data);

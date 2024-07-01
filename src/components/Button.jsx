@@ -15,7 +15,11 @@ function Button({ label, color, ...props }) {
     }
   };
   return (
-    <button type="submit" className={classes(color)} {...props}>
+    <button
+      type="submit"
+      className={`${classes(color)} cursor-pointer`}
+      {...props}
+    >
       {label}
     </button>
   );
